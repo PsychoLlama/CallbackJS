@@ -74,6 +74,14 @@
       return this;
     };
 
+    Callback.prototype["catch"] = function(callback) {
+      if (!callback) {
+        return;
+      }
+      this.error = callback;
+      return this;
+    };
+
     return Callback;
 
   })();

@@ -54,5 +54,10 @@ class Callback
       @cancelled = true
     return @
   
+  catch: (callback) ->
+    return if not callback
+    
+    @error = callback
+    return @
 
 @Callback = Callback
