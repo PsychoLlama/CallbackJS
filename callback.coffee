@@ -54,8 +54,8 @@ class Callback
           custom[target] = new Array()
         custom[target].push @
       when Number
-      time = target
-      repeat = event
+        time = target
+        repeat = event
       
         if repeat
           setInterval((=>

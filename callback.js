@@ -75,6 +75,7 @@
     };
 
     Callback.prototype.when = function(target, event) {
+      var repeat, time;
       if (!target) {
         return;
       }
@@ -86,18 +87,20 @@
           custom[target].push(this);
           break;
         case Number:
-          if (event) {
+          time = target;
+          repeat = event;
+          if (repeat) {
             setInterval(((function(_this) {
               return function() {
                 return _this.invoke();
               };
-            })(this)), target);
+            })(this)), time);
           } else {
             setTimeout(((function(_this) {
               return function() {
                 return _this.invoke();
               };
-            })(this)), target);
+            })(this)), time);
           }
           break;
         default:
