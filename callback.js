@@ -9,11 +9,8 @@
       if (!callback) {
         return void 0;
       }
-      if (callback.constructor === String) {
-        return console.log("Return a custom event");
-      }
       if (callback.constructor !== Function) {
-        throw new Error("Not a function, bro");
+        throw new Error("Not a callback, bro");
       }
       this.callback = callback;
       this.fired = [];
@@ -53,8 +50,19 @@
       return this;
     };
 
-    Callback.prototype.renew = function() {
-      this.cancelled = false;
+    Callback.prototype.renew = function(arg) {
+      if (arg == null) {
+        arg = null;
+      }
+      if (arg === null) {
+        this.cancelled = false;
+      } else {
+        new Callback((function(_this) {
+          return function() {
+            return _this.cancelled = false;
+          };
+        })(this)).when(arg);
+      }
       return this;
     };
 
@@ -78,11 +86,19 @@
           custom[target].push(this);
           break;
         case Number:
-          setTimeout(((function(_this) {
-            return function() {
-              return _this.invoke();
-            };
-          })(this)), target);
+          if (event) {
+            setInterval(((function(_this) {
+              return function() {
+                return _this.invoke();
+              };
+            })(this)), target);
+          } else {
+            setTimeout(((function(_this) {
+              return function() {
+                return _this.invoke();
+              };
+            })(this)), target);
+          }
           break;
         default:
           if (typeof target.addEventListener === "function") {

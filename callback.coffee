@@ -3,11 +3,8 @@ custom = {}
 class Callback
   constructor: (callback) ->
     return undefined if not callback
-    
-    if callback.constructor is String
-      return console.log "Return a custom event"
     if callback.constructor isnt Function
-      throw new Error "Not a function, bro"
+      throw new Error "Not a callback, bro"
     
     @callback = callback
     @fired = []
@@ -36,8 +33,11 @@ class Callback
       new Callback(=> @cancelled = true).when(arg)
     return @
   
-  renew: ->
-    @cancelled = false
+  renew: (arg=null) ->
+    if arg is null
+      @cancelled = false
+    else
+      new Callback(=> @cancelled = false).when(arg)
     return @
   
   catch: (callback) ->
@@ -54,9 +54,17 @@ class Callback
           custom[target] = new Array()
         custom[target].push @
       when Number
-        setTimeout((=>
-          @invoke()
-          ), target)
+      time = target
+      repeat = event
+      
+        if repeat
+          setInterval((=>
+            @invoke()
+            ), time)
+        else
+          setTimeout((=>
+            @invoke()
+            ), time)
       else
         target.addEventListener? event, (event) =>
           @invoke event
