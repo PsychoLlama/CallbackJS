@@ -29,9 +29,11 @@ class Callback
       
     return @
     
-  cancel: (arg=false) ->
-    if arg is false
+  cancel: (arg=null) ->
+    if arg is null
       @cancelled = true
+    else
+      new Callback(=> @cancelled = true).when(arg)
     return @
   
   renew: ->
@@ -51,13 +53,13 @@ class Callback
         if not custom[target]
           custom[target] = new Array()
         custom[target].push @
-      when Object
-        target.addEventListener event, (event) =>
-          @invoke event
       when Number
         setTimeout((=>
           @invoke()
           ), target)
+      else
+        target.addEventListener? event, (event) =>
+          @invoke event
     
     return @
   

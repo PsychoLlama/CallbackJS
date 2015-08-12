@@ -39,10 +39,16 @@
 
     Callback.prototype.cancel = function(arg) {
       if (arg == null) {
-        arg = false;
+        arg = null;
       }
-      if (arg === false) {
+      if (arg === null) {
         this.cancelled = true;
+      } else {
+        new Callback((function(_this) {
+          return function() {
+            return _this.cancelled = true;
+          };
+        })(this)).when(arg);
       }
       return this;
     };
@@ -71,19 +77,21 @@
           }
           custom[target].push(this);
           break;
-        case Object:
-          target.addEventListener(event, (function(_this) {
-            return function(event) {
-              return _this.invoke(event);
-            };
-          })(this));
-          break;
         case Number:
           setTimeout(((function(_this) {
             return function() {
               return _this.invoke();
             };
           })(this)), target);
+          break;
+        default:
+          if (typeof target.addEventListener === "function") {
+            target.addEventListener(event, (function(_this) {
+              return function(event) {
+                return _this.invoke(event);
+              };
+            })(this));
+          }
       }
       return this;
     };
