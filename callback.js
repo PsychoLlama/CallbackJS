@@ -18,47 +18,18 @@
       this.callback = callback;
       this.fired = [];
       this.cancelled = false;
-      this.pass = [];
       this["this"] = null;
+      this.pass = null;
       this.conditional = null;
       this.error = null;
     }
 
     Callback.prototype.config = function(vars) {
-      var constructor, property;
+      var property;
       if (typeof vars !== 'object') {
-        throw new Error("You didn't give an object.");
+        return false;
       }
       for (property in vars) {
-        constructor = vars[property].constructor;
-        switch (property) {
-          case "fired":
-            return false;
-          case "callback":
-            if (constructor !== Function) {
-              return false;
-            }
-            break;
-          case "conditional":
-            if (constructor !== Function) {
-              return false;
-            }
-            break;
-          case "error":
-            if (constructor !== Function) {
-              return false;
-            }
-            break;
-          case "cancelled":
-            if (constructor !== Boolean) {
-              return false;
-            }
-            break;
-          case "pass":
-            if (constructor !== Array) {
-              return false;
-            }
-        }
         if (this.hasOwnProperty(property)) {
           this[property] = vars[property];
         }
@@ -73,6 +44,11 @@
       if (arg === false) {
         this.cancelled = true;
       }
+      return this;
+    };
+
+    Callback.prototype.renew = function() {
+      this.cancelled = false;
       return this;
     };
 
@@ -101,6 +77,13 @@
               return _this.invoke(event);
             };
           })(this));
+          break;
+        case Number:
+          setTimeout(((function(_this) {
+            return function() {
+              return _this.invoke();
+            };
+          })(this)), target);
       }
       return this;
     };
@@ -113,8 +96,11 @@
       return this;
     };
 
-    Callback.prototype.invoke = function(args) {
+    Callback.prototype.invoke = function(arg) {
       var condition, error;
+      if (arg == null) {
+        arg = null;
+      }
       if (this.cancelled) {
         return false;
       }
@@ -125,12 +111,26 @@
         }
       }
       try {
-        this.callback(args);
+        if ((this['this'] != null) && (this.pass != null)) {
+          this.callback.call(this['this'], this.pass);
+        } else if ((this['this'] != null) && (arg != null)) {
+          this.callback.call(this['this'], arg);
+        } else if ((this['this'] != null) && !arg) {
+          this.callback.call(this['this']);
+        } else if (this.pass != null) {
+          this.callback(this.pass);
+        } else if (arg != null) {
+          this.callback(arg);
+        } else {
+          this.callback();
+        }
         this.fired.push(new Date());
       } catch (_error) {
         error = _error;
-        if (typeof this.error === "function") {
+        if (this.error) {
           this.error(error);
+        } else {
+          throw error;
         }
       }
       return this;

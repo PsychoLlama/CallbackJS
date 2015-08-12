@@ -13,38 +13,16 @@ class Callback
     @fired = []
     @cancelled = false
     
-    @pass = []
     @["this"] = null
+    @pass = null
     
     @conditional = null
     @error = null
   
   config: (vars) ->
-    if typeof vars isnt 'object'
-      throw new Error "You didn't give an object."
+    return false if typeof vars isnt 'object'
     
     for property of vars
-      constructor = vars[property].constructor
-      
-      # Test to make sure config vars are valid
-      switch property
-        when "fired"
-          return false
-        when "callback"
-          if constructor isnt Function
-            return false
-        when "conditional"
-          if constructor isnt Function
-            return false
-        when "error"
-          if constructor isnt Function
-            return false
-        when "cancelled"
-          if constructor isnt Boolean
-            return false
-        when "pass"
-          if constructor isnt Array
-            return false 
       
       if @.hasOwnProperty property
         @[property] = vars[property]
@@ -54,6 +32,10 @@ class Callback
   cancel: (arg=false) ->
     if arg is false
       @cancelled = true
+    return @
+  
+  renew: ->
+    @cancelled = false
     return @
   
   catch: (callback) ->
@@ -72,6 +54,10 @@ class Callback
       when Object
         target.addEventListener event, (event) =>
           @invoke event
+      when Number
+        setTimeout((=>
+          @invoke()
+          ), target)
     
     return @
   
@@ -81,17 +67,32 @@ class Callback
     
     return @
   
-  invoke: (args) ->
+  invoke: (arg=null) ->
     return false if @cancelled
     if @conditional
       condition = @conditional()
       if not condition
         return condition
     try
-      @callback args
+      if @['this']? and @pass?
+        @callback.call @['this'], @pass
+      else if @['this']? and arg?
+        @callback.call @['this'], arg
+      else if @['this']? and not arg
+        @callback.call @['this']
+      else if @pass?
+        @callback @pass
+      else if arg?
+        @callback arg
+      else @callback()
+      
       @fired.push new Date()
     catch error
-      @error?(error)
+      if @error
+        @error error
+      else
+        throw error
+    
     return @
 
 Callback.fire = (event) ->
