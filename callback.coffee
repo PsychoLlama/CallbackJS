@@ -109,12 +109,15 @@ class Callback
     
     return @
 
-Callback.fire = (event) ->
+Callback.fire = (event, args...) ->
   return if typeof event isnt 'string'
   return if not custom[event]
   
   for callback in custom[event]
-    try callback.invoke()
+    try
+      if args.length
+        callback.invoke args
+      else callback.invoke()
   
   return custom[event]
 
