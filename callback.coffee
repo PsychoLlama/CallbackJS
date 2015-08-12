@@ -1,3 +1,5 @@
+custom = {}
+
 class Callback
   constructor: (callback) ->
     return undefined if not callback
@@ -59,5 +61,46 @@ class Callback
     
     @error = callback
     return @
+  
+  when: (target, event) ->
+    return if not target
+    switch target.constructor
+      when String
+        if not custom[target]
+          custom[target] = new Array()
+        custom[target].push @
+      when Object
+        target.addEventListener event, (event) =>
+          @invoke event
+    
+    return @
+  
+  if: (conditional) ->
+    return false if typeof conditional isnt 'function'
+    @conditional = conditional
+    
+    return @
+  
+  invoke: (args) ->
+    return false if @cancelled
+    if @conditional
+      condition = @conditional()
+      if not condition
+        return condition
+    try
+      @callback args
+      @fired.push new Date()
+    catch error
+      @error?(error)
+    return @
+
+Callback.fire = (event) ->
+  return if typeof event isnt 'string'
+  return if not custom[event]
+  
+  for callback in custom[event]
+    try callback.invoke()
+  
+  return custom[event]
 
 @Callback = Callback
