@@ -104,6 +104,13 @@
           }
           break;
         default:
+          if (event.toLowerCase() === 'load') {
+            switch (target.readyState) {
+              case 'complete':
+              case 4:
+                this.invoke(target);
+            }
+          }
           if (typeof target.addEventListener === "function") {
             target.addEventListener(event, (function(_this) {
               return function(event) {

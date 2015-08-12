@@ -66,6 +66,10 @@ class Callback
             @invoke()
             ), time)
       else
+        if event.toLowerCase() is 'load'
+          switch target.readyState
+            when 'complete', 4
+              @invoke target
         target.addEventListener? event, (event) =>
           @invoke event
     
