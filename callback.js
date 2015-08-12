@@ -7,11 +7,14 @@
 
   Callback = (function() {
     function Callback(callback) {
-      if (!callback) {
-        return void 0;
+      if (callback == null) {
+        callback = null;
+      }
+      if (callback === null) {
+        callback = function() {};
       }
       if (callback.constructor !== Function) {
-        throw new Error("Not a callback, bro");
+        throw new Error("That ain't no function, missy");
       }
       this.callback = callback;
       this.fired = [];

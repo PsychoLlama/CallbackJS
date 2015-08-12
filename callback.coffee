@@ -1,10 +1,11 @@
 custom = {}
 
 class Callback
-  constructor: (callback) ->
-    return undefined if not callback
+  constructor: (callback=null) ->
+    if callback is null
+      callback = ->
     if callback.constructor isnt Function
-      throw new Error "Not a callback, bro"
+      throw new Error "That ain't no function, missy"
     
     @callback = callback
     @fired = []
