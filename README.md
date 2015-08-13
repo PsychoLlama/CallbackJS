@@ -188,6 +188,7 @@ with `config()`.
 Lists are great. Let's make a list of the methods you can use.
 
 - new Callback(function)
+- config(optional object)
 - when(event fires)
 - cancel(optional event)
 - renew(optional event)
