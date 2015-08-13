@@ -38,34 +38,40 @@
       return this;
     };
 
-    Callback.prototype.cancel = function(arg) {
-      if (arg == null) {
-        arg = null;
+    Callback.prototype.cancel = function(target, event) {
+      if (target == null) {
+        target = null;
       }
-      if (arg === null) {
+      if (event == null) {
+        event = null;
+      }
+      if (target === null) {
         this.cancelled = true;
       } else {
         new Callback((function(_this) {
           return function() {
             return _this.cancelled = true;
           };
-        })(this)).when(arg);
+        })(this)).when(target, event);
       }
       return this;
     };
 
-    Callback.prototype.renew = function(arg) {
-      if (arg == null) {
-        arg = null;
+    Callback.prototype.renew = function(target, event) {
+      if (target == null) {
+        target = null;
       }
-      if (arg === null) {
+      if (event == null) {
+        event = null;
+      }
+      if (target === null) {
         this.cancelled = false;
       } else {
         new Callback((function(_this) {
           return function() {
             return _this.cancelled = false;
           };
-        })(this)).when(arg);
+        })(this)).when(target, event);
       }
       return this;
     };
@@ -108,7 +114,10 @@
           }
           break;
         default:
-          if (event.toLowerCase() === 'load') {
+          try {
+            event = event.toLowerCase();
+          } catch (_error) {}
+          if (event === 'load') {
             switch (target.readyState) {
               case 'complete':
               case 4:

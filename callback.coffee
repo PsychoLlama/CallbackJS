@@ -27,18 +27,18 @@ class Callback
       
     return @
     
-  cancel: (arg=null) ->
-    if arg is null
+  cancel: (target=null, event=null) ->
+    if target is null
       @cancelled = true
     else
-      new Callback(=> @cancelled = true).when(arg)
+      new Callback(=> @cancelled = true).when(target, event)
     return @
   
-  renew: (arg=null) ->
-    if arg is null
+  renew: (target=null, event=null) ->
+    if target is null
       @cancelled = false
     else
-      new Callback(=> @cancelled = false).when(arg)
+      new Callback(=> @cancelled = false).when(target, event)
     return @
   
   catch: (callback) ->
@@ -49,6 +49,7 @@ class Callback
   
   when: (target, event) ->
     return if not target
+    
     switch target.constructor
       when String
         if not custom[target]
@@ -67,7 +68,9 @@ class Callback
             @invoke()
             ), time)
       else
-        if event.toLowerCase() is 'load'
+        try event = event.toLowerCase()
+        
+        if event is 'load'
           switch target.readyState
             when 'complete', 4
               @invoke target
