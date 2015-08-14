@@ -85,7 +85,7 @@ class Callback
     
     return @
   
-  invoke: (arg=null) ->
+  invoke: (arg...) ->
     return false if @cancelled
     if @conditional
       condition = @conditional()
@@ -95,13 +95,13 @@ class Callback
       if @['this']? and @pass?
         @callback.call @['this'], @pass
       else if @['this']? and arg?
-        @callback.call @['this'], arg
+        @callback.apply @['this'], arg
       else if @['this']? and not arg
         @callback.call @['this']
       else if @pass?
-        @callback @pass
+        @callback.call @, @pass
       else if arg?
-        @callback arg
+        @callback arg...
       else @callback()
       
       @fired.push new Date()
@@ -120,7 +120,7 @@ Callback.fire = (event, args...) ->
   for callback in custom[event]
     try
       if args.length
-        callback.invoke args
+        callback.invoke args...
       else callback.invoke()
   
   return custom[event]

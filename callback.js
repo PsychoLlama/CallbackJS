@@ -143,11 +143,9 @@
       return this;
     };
 
-    Callback.prototype.invoke = function(arg) {
-      var condition, error;
-      if (arg == null) {
-        arg = null;
-      }
+    Callback.prototype.invoke = function() {
+      var arg, condition, error;
+      arg = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       if (this.cancelled) {
         return false;
       }
@@ -161,13 +159,13 @@
         if ((this['this'] != null) && (this.pass != null)) {
           this.callback.call(this['this'], this.pass);
         } else if ((this['this'] != null) && (arg != null)) {
-          this.callback.call(this['this'], arg);
+          this.callback.apply(this['this'], arg);
         } else if ((this['this'] != null) && !arg) {
           this.callback.call(this['this']);
         } else if (this.pass != null) {
-          this.callback(this.pass);
+          this.callback.call(this, this.pass);
         } else if (arg != null) {
-          this.callback(arg);
+          this.callback.apply(this, arg);
         } else {
           this.callback();
         }
@@ -201,7 +199,7 @@
       callback = _ref[_i];
       try {
         if (args.length) {
-          callback.invoke(args);
+          callback.invoke.apply(callback, args);
         } else {
           callback.invoke();
         }
