@@ -88,7 +88,7 @@ class Callback
   invoke: (arg...) ->
     return false if @cancelled
     if @conditional
-      condition = @conditional()
+      condition = @conditional arg...
       if not condition
         return condition
     try

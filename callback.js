@@ -150,7 +150,7 @@
         return false;
       }
       if (this.conditional) {
-        condition = this.conditional();
+        condition = this.conditional.apply(this, arg);
         if (!condition) {
           return condition;
         }
