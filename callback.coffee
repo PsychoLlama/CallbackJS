@@ -34,6 +34,11 @@ class Callback
       new Callback(=> @cancelled = true).when(target, event)
     return @
   
+  unless: (target=null, event=null) ->
+    if target isnt null
+      new Callback(=> @cancelled = true).when(target, event)
+    return @
+  
   renew: (target=null, event=null) ->
     if target is null
       @cancelled = false

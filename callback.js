@@ -57,6 +57,23 @@
       return this;
     };
 
+    Callback.prototype.unless = function(target, event) {
+      if (target == null) {
+        target = null;
+      }
+      if (event == null) {
+        event = null;
+      }
+      if (target !== null) {
+        new Callback((function(_this) {
+          return function() {
+            return _this.cancelled = true;
+          };
+        })(this)).when(target, event);
+      }
+      return this;
+    };
+
     Callback.prototype.renew = function(target, event) {
       if (target == null) {
         target = null;
