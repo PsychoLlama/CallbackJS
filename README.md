@@ -25,16 +25,19 @@ new Callback( function(args) {
 })
 .when(button, 'click')
 .when('My custom event')
-.cancel(15000)
+.unless(15000)
 ```
 
 Here we defined a new callback to be invoked when either of
 two events fire, the button click or the custom event (we'll cover
-custom events later). But what about cancel? Cancel tells
-CallbackJS not to execute your callback until further notice.
-The argument we gave of 15000 is actually an event. It means
-your callback shouldn't be cancelled until **15000 milliseconds**
-(15 seconds) have passed.
+custom events later). But what about "unless"? Unless tells
+CallbackJS not to execute your callback if some event fired.
+The argument we gave of 15000 is an event. It means
+your callback will be cancelled in **15000 milliseconds**
+(15 seconds).
+
+> `unless` can take any event `when` can. We'll cover more events
+here in a second...
 
 Let's look at another example...
 
@@ -70,9 +73,10 @@ Okay, so what does that mean?
 Let's step through it:
 
 - Create a new callback
-- *Cancel* that callback, so it won't be run until further notice
+- *Cancel* that callback, so it won't execute until you re-enable
+it
 - Then **renew** your callback at some future event, in this case,
-when your request loads.
+when your request loads
 - Bind your callback to a click event
 
 This means that your callback will *only* execute the click
@@ -162,8 +166,8 @@ new Callback(function() {})
 
 That's it! Your event has been created, and you can use it with
 as many callbacks as you'd like. It also plays nicely with
-`cancel("on event")` and
-`renew("on event")`.
+`unless("event")` and
+`renew("event")`.
 
 ### Firing custom events
 
@@ -190,7 +194,8 @@ Lists are great. Let's make a list of the methods you can use.
 - new Callback(function)
 - config(optional object)
 - when(event fires)
-- cancel(optional event)
+- cancel()
+- unless(required event)
 - renew(optional event)
 - if(function)
 - catch(handler)
