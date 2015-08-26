@@ -2,9 +2,15 @@ custom = {}
 
 class Callback
   constructor: (callback=null) ->
-    if callback is null
+    if typeof callback is 'string'
+      string = callback
+      
+      callback = (args...) ->
+        Callback.fire string, args...
+    else if callback is null
       callback = ->
-    if callback.constructor isnt Function
+    constructor = callback.constructor
+    if constructor isnt Function and constructor isnt String
       throw new Error "That ain't no function, missy"
     
     @callback = callback

@@ -7,13 +7,22 @@
 
   Callback = (function() {
     function Callback(callback) {
+      var constructor, string;
       if (callback == null) {
         callback = null;
       }
-      if (callback === null) {
+      if (typeof callback === 'string') {
+        string = callback;
+        callback = function() {
+          var args;
+          args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+          return Callback.fire.apply(Callback, [string].concat(__slice.call(args)));
+        };
+      } else if (callback === null) {
         callback = function() {};
       }
-      if (callback.constructor !== Function) {
+      constructor = callback.constructor;
+      if (constructor !== Function && constructor !== String) {
         throw new Error("That ain't no function, missy");
       }
       this.callback = callback;
