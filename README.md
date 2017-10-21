@@ -1,6 +1,13 @@
-# CallbackJS
+# [UNMAINTAINED] CallbackJS
 
 *A useful event library.*
+
+## Maintenance Notice
+This project exists because of its historical significance. It's the second project I wrote while teaching myself to code.
+
+Hide your eyes and move along.
+
+## Features
 
 What's so cool about CallbackJS?
 Here we go:
